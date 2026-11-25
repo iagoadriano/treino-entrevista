@@ -73,6 +73,13 @@ summary{cursor:pointer;font-weight:600;font-family:"Space Grotesk"}
 .starcard dt{font-weight:700;color:var(--accent)}
 .foot{color:var(--mut);font-size:13px;text-align:center;padding:30px 16px 50px}
 .foot a{color:inherit}
+.keybox{display:flex;gap:8px;align-items:stretch}
+.keybox input{flex:1}
+.keybox .btn{padding:0 14px;min-height:0}
+.check{display:flex;align-items:center;gap:8px;font-weight:500;font-size:14px;margin:0;cursor:pointer}
+.check input{width:auto;min-height:0}
+.pill#keyEstado{background:var(--line);color:var(--mut)}
+.pill#keyEstado[data-on=salva]{background:var(--mint);color:var(--mintInk)}
 </style>
 </head>
 <body>
@@ -89,9 +96,14 @@ summary{cursor:pointer;font-weight:600;font-family:"Space Grotesk"}
 </div></div></header>
 
 <main class="band"><div class="wrap">
-<div class="card" style="margin-bottom:20px"><label for="apikey" style="margin-top:0">Sua chave da API Anthropic</label>
-<input id="apikey" type="password" placeholder="sk-ant-..." autocomplete="off">
-<p class="small">Crie em console.anthropic.com. A chave fica salva só neste navegador e vai direto para a Anthropic.</p></div>
+<div class="card" style="margin-bottom:20px"><label for="apikey" style="margin-top:0">Sua chave da API Anthropic <span class="pill" id="keyEstado">não salva</span></label>
+<div class="keybox"><input id="apikey" type="password" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+<button class="btn ghost" id="verKey" type="button" aria-label="Mostrar ou esconder a chave" title="Mostrar/esconder">👁️</button></div>
+<div class="row" style="margin-top:10px">
+<label class="check"><input type="checkbox" id="lembrar"> Guardar a chave neste navegador</label>
+<button class="btn ghost" id="esquecer" type="button">🗑️ Esquecer chave</button>
+</div>
+<p class="small">Crie em console.anthropic.com. Este app roda 100% no seu navegador: a chave vai <b>direto para a Anthropic</b>, sem passar por nenhum servidor nosso. Por isso não dá para escondê-la de verdade de quem usa este navegador — deixe <b>desmarcado</b> para que ela suma ao fechar a aba, e aperte <b>Esquecer</b> em computador compartilhado. Nunca use a chave de outra pessoa.</p></div>
 <p id="noai" class="rule" hidden></p>
 
 <!-- Perfil + estágio: compartilhado por Treinar, STAR e Perguntas difíceis -->
@@ -242,9 +254,19 @@ chips.forEach(c=>c.onclick=()=>{estagio=c.dataset.s;LS.set('estagio',estagio);pa
 paintChips();
 
 // ---------- IA: chave da API Anthropic do próprio usuário ----------
-const keyBox=$('apikey');
-keyBox.value=LS.get('anthropic_key','');
-keyBox.onchange=()=>LS.set('anthropic_key',keyBox.value.trim());
+const keyBox=$('apikey'),lembrar=$('lembrar'),keyEstado=$('keyEstado');
+// A chave guardada vale como "quero lembrar"; sem nada guardado, começa não-salva.
+const savedKey=LS.get('anthropic_key','');
+keyBox.value=savedKey;lembrar.checked=!!savedKey;
+const pintaEstado=()=>{const on=lembrar.checked&&keyBox.value.trim();keyEstado.textContent=on?'salva neste navegador':'não salva';keyEstado.dataset.on=on?'salva':'nao'};
+const guarda=()=>{ // escreve no disco só se "lembrar"; senão fica só em memória
+ if(lembrar.checked&&keyBox.value.trim())LS.set('anthropic_key',keyBox.value.trim());
+ else{try{localStorage.removeItem('anthropic_key')}catch(e){}}
+ pintaEstado();
+};
+keyBox.oninput=guarda;lembrar.onchange=guarda;pintaEstado();
+$('verKey').onclick=()=>{keyBox.type=keyBox.type==='password'?'text':'password'};
+$('esquecer').onclick=()=>{keyBox.value='';lembrar.checked=false;try{localStorage.removeItem('anthropic_key')}catch(e){}pintaEstado();keyBox.focus()};
 const callAI=async(prompt,maxTokens)=>{
  const key=keyBox.value.trim();if(!key)throw{code:'nokey'};
  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
