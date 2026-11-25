@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treino de Entrevista</title>
+<meta name="description" content="Pratique entrevista de emprego em inglês: treino com perguntas, correção, pronúncia, banco de respostas STAR, perguntas difíceis e intérprete fiel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calm coach, direct, encouraging, Portuguese first
+   IDEA: a rehearsal room - one question on a card, your answer, the coach's notes
+   PICTURE: the live question card with mic, speaker and score dial
+   COLOUR and TYPE: black/white plus mint field; Space Grotesk 700 + Inter
+   LAYOUT: tabs on top, working card first, notes below; stacks under 600px */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0b0c0d);--ink:light-dark(#0b0c0d,#f2f3f4);--mut:light-dark(#5b6168,#9aa1a8);--line:light-dark(#e3e5e8,#24272b);--mint:light-dark(#b8f5d0,#173d2a);--mintInk:light-dark(#0b3a22,#b8f5d0);--card:light-dark(#f6f7f8,#15171a);--accent:#19c37d}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,4.4vw,48px)}h2{font-size:24px}h3{font-size:18px}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+.hero{background:var(--mint);color:var(--mintInk)}
+.hero p{max-width:62ch;margin:10px 0 0}
+.wrap{max-width:1100px;margin:0 auto}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.tabs button{border:1.5px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:10px 18px;font:600 15px Inter;cursor:pointer;min-height:44px}
+.tabs button[aria-selected=true]{background:var(--mintInk);color:var(--mint)}
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:24px;align-items:start}
+@media(max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,3vw,28px)}
+.card+.card{margin-top:20px}
+label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+textarea,input,select{width:100%;font:16px Inter;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:12px}
+textarea{min-height:110px;resize:vertical}
+textarea:focus,input:focus,select:focus,button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.btn{min-height:44px;border-radius:12px;border:0;padding:11px 18px;font:600 15px Inter;cursor:pointer;background:var(--ink);color:var(--bg)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:default}
+.q{font-family:"Space Grotesk";font-size:clamp(22px,2.6vw,30px);line-height:1.2;margin:6px 0 4px}
+.qpt{color:var(--mut);margin:0}
+.tag{display:inline-block;font-size:13px;color:var(--mut)}
+.out{white-space:pre-wrap;margin-top:12px}
+.dial{display:flex;align-items:baseline;gap:6px}
+.dial b{font-family:"Space Grotesk";font-size:56px;line-height:1}
+.meter{height:10px;border-radius:9px;background:var(--line);overflow:hidden;margin:8px 0 14px}
+.meter i{display:block;height:100%;background:var(--accent);width:0;transition:width .6s}
+@media(prefers-reduced-motion:reduce){.meter i{transition:none}}
+.say{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0}
+.say .en{font-weight:600}.say .pr{color:var(--mut);font-size:15px}
+.note{font-size:14px;color:var(--mut);margin-top:10px}
+.rule{border-left:4px solid var(--accent);padding:8px 12px;background:var(--card);border-radius:6px;font-size:15px}
+[hidden]{display:none!important}
+.small{font-size:13px;color:var(--mut)}
+ol.kit{padding-left:20px}ol.kit li{margin-bottom:16px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.chip{border:1.5px solid var(--line);background:transparent;color:inherit;border-radius:999px;padding:7px 14px;font:600 14px Inter;cursor:pointer;min-height:38px}
+.chip[aria-pressed=true]{background:var(--accent);color:#06120b;border-color:var(--accent)}
+.spark{display:flex;gap:4px;align-items:flex-end;height:46px;margin-top:6px}
+.spark i{flex:1;background:var(--accent);border-radius:3px 3px 0 0;min-height:4px;opacity:.85}
+.hist{list-style:none;padding:0;margin:10px 0 0}
+.hist li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.hist li b{font-family:"Space Grotesk"}
+.block{border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+.block h3{margin-bottom:4px}
+details.block[open]{background:var(--card)}
+summary{cursor:pointer;font-weight:600;font-family:"Space Grotesk"}
+.pill{display:inline-block;background:var(--mint);color:var(--mintInk);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;margin-left:8px}
+.starcard{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px;background:var(--bg)}
+.starcard .t{font-weight:600;font-family:"Space Grotesk"}
+.starcard dl{margin:8px 0 0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:14px}
+.starcard dt{font-weight:700;color:var(--accent)}
+.foot{color:var(--mut);font-size:13px;text-align:center;padding:30px 16px 50px}
+.foot a{color:inherit}
+</style>
+</head>
+<body>
+<header class="band hero"><div class="wrap">
+<h1>Treino de entrevista em inglês</h1>
+<p>Pratique antes, entenda as perguntas na hora e responda com as suas próprias palavras. O sistema corrige, traduz e mostra como pronunciar — sem nunca inventar experiências que você não tem.</p>
+<div class="tabs" role="tablist" aria-label="Seções">
+<button role="tab" data-t="treino" aria-selected="true">Treinar</button>
+<button role="tab" data-t="star" aria-selected="false">Respostas STAR</button>
+<button role="tab" data-t="dificeis" aria-selected="false">Perguntas difíceis</button>
+<button role="tab" data-t="kit" aria-selected="false">Kit de preparação</button>
+<button role="tab" data-t="int" aria-selected="false">Intérprete</button>
+</div></div></header>
+
+<main class="band"><div class="wrap">
+<div class="card" style="margin-bottom:20px"><label for="apikey" style="margin-top:0">Sua chave da API Anthropic</label>
+<input id="apikey" type="password" placeholder="sk-ant-..." autocomplete="off">
+<p class="small">Crie em console.anthropic.com. A chave fica salva só neste navegador e vai direto para a Anthropic.</p></div>
+<p id="noai" class="rule" hidden></p>
+
+<!-- Perfil + estágio: compartilhado por Treinar, STAR e Perguntas difíceis -->
+<div class="card" style="margin-bottom:20px">
+<label for="perfil" style="margin-top:0">Seu perfil e a vaga <span class="small">(usado em todas as abas)</span></label>
+<textarea id="perfil">Vaga: avaliação de IA / linguística na micro1. Candidato: Iago, Araguaína (TO). Assessor técnico em licitações na prefeitura, desenvolvedor de software (SICS Saúde, agentes de IA com Claude), designer gráfico, 4 anos em abrigo social. Inglês básico.</textarea>
+<label for="estagio">Estágio da entrevista</label>
+<div class="chips" id="estagio" role="group" aria-label="Estágio da entrevista">
+<button class="chip" data-s="triagem" aria-pressed="true">Triagem (RH / telefone)</button>
+<button class="chip" data-s="tecnica" aria-pressed="false">Técnica</button>
+<button class="chip" data-s="final" aria-pressed="false">Rodada final</button>
+</div>
+<p class="small" style="margin-top:8px">A triagem cobra motivação e trajetória; a técnica cobra o que a vaga pede; a final cobra valores, salário e "alguma ressalva?".</p>
+</div>
+
+<!-- ======================= TREINAR ======================= -->
+<section id="treino" class="grid">
+<div class="card">
+<span class="tag" id="qnum">Pergunta 1</span>
+<p class="q" id="q">Tell me about yourself: your background, key skills, and what you've been working on recently.</p>
+<p class="qpt" id="qpt">Fale sobre você: sua formação, principais habilidades e no que tem trabalhado recentemente.</p>
+<div class="row"><button class="btn ghost" id="ouvirQ">🔊 Ouvir pergunta</button></div>
+<label for="resp">Sua resposta (em inglês, do seu jeito)</label>
+<textarea id="resp" placeholder="Hi, my name is..."></textarea>
+<div class="row">
+<button class="btn ghost" id="mic" hidden>🎙️ Falar</button>
+<button class="btn" id="avaliar">Avaliar resposta</button>
+<button class="btn ghost" id="prox">Próxima pergunta</button>
+</div>
+<p class="note">Dica: use a estrutura STAR. Situação, Tarefa, Ação, Resultado. Monte seu banco na aba <b>Respostas STAR</b>.</p>
+</div>
+<div class="card" aria-live="polite">
+<h2>Nota do treinador</h2>
+<div class="dial"><b id="nota">–</b><span>/10</span></div>
+<div class="meter"><i id="bar"></i></div>
+<div id="fb" class="out small">Responda à pergunta e toque em Avaliar.</div>
+<div id="melhor" hidden>
+<h3 style="margin-top:16px">Versão melhorada</h3>
+<div class="say"><div class="en" id="mEn"></div><div class="pr" id="mPr"></div></div>
+<button class="btn ghost" id="ouvirM">🔊 Ouvir pronúncia</button>
+</div>
+<div id="progresso" hidden>
+<h3 style="margin-top:18px">Seu progresso</h3>
+<div class="spark" id="spark" aria-hidden="true"></div>
+<p class="small" id="progStat"></p>
+<ul class="hist" id="histList"></ul>
+<button class="btn ghost" id="limpar" style="margin-top:10px">Limpar progresso</button>
+</div>
+</div>
+</section>
+
+<!-- ======================= RESPOSTAS STAR ======================= -->
+<section id="star" hidden>
+<div class="card">
+<h2>Banco de respostas STAR</h2>
+<p class="small" style="margin-top:6px">Tenha de 4 a 6 histórias prontas (Situação · Tarefa · Ação · Resultado) que você consegue contar em 1 a 2 minutos. O assistente monta os rascunhos <b>só com fatos do seu perfil</b> — nunca inventa experiência. Revise, ajuste e decore. Salvo neste navegador.</p>
+<div class="row"><button class="btn" id="gerarStar">Gerar banco a partir do meu perfil</button>
+<button class="btn ghost" id="addStar">+ Adicionar vazio</button></div>
+<div id="starOut"></div>
+</div>
+</section>
+
+<!-- ======================= PERGUNTAS DIFÍCEIS ======================= -->
+<section id="dificeis" hidden>
+<div class="card">
+<h2>Perguntas difíceis &amp; o que perguntar</h2>
+<p class="small" style="margin-top:6px">As perguntas que pegam, com o padrão <b>ponte</b> para o que você NÃO tem: reconhece a lacuna → liga à experiência mais próxima → mostra como está aprendendo. Sem inventar nada. E as perguntas que <b>você</b> faz ao entrevistador — que mostram preparo.</p>
+<div class="row">
+<button class="btn" id="gerarDif">Gerar respostas pras perguntas difíceis</button>
+<button class="btn ghost" id="gerarPerg">Gerar perguntas pra eu fazer</button>
+</div>
+<div id="difOut"></div>
+<div id="pergOut"></div>
+</div>
+</section>
+
+<!-- ======================= KIT ======================= -->
+<section id="kit" hidden>
+<div class="card">
+<label for="cv" style="margin-top:0">Cole seu currículo ou resumo</label>
+<textarea id="cv" placeholder="Experiência, habilidades, projetos..."></textarea>
+<label for="vaga">Vaga ou plataforma</label>
+<input id="vaga" value="micro1 – AI recruiter interview">
+<div class="row"><button class="btn" id="gerarKit">Gerar 10 perguntas com respostas</button>
+<button class="btn ghost" id="copiarKit" hidden>📋 Copiar tudo</button></div>
+<ol class="kit" id="kitOut"></ol>
+<p class="small">Estude e treine em voz alta antes. Na entrevista, fale de memória, nunca lendo.</p>
+</div>
+</section>
+
+<!-- ======================= INTÉRPRETE ======================= -->
+<section id="int" class="grid" hidden>
+<div class="card">
+<label for="pq" style="margin-top:0">Pergunta do entrevistador (em inglês)</label>
+<textarea id="pq" placeholder="Cole a pergunta aqui"></textarea>
+<div class="row"><button class="btn" id="tradQ">Traduzir pergunta</button></div>
+<div id="pqOut" class="out"></div>
+<label for="mr">Sua resposta em português (com as suas palavras)</label>
+<textarea id="mr" placeholder="Ex.: Eu confiro as certidões no site oficial..."></textarea>
+<div class="row"><button class="btn ghost" id="mic2" hidden>🎙️ Falar</button><button class="btn" id="tradR">Passar para o inglês</button></div>
+</div>
+<div class="card" aria-live="polite">
+<h2>Em inglês</h2>
+<div class="say"><div class="en" id="rEn">–</div><div class="pr" id="rPr"></div></div>
+<button class="btn ghost" id="ouvirR">🔊 Ouvir</button>
+<p class="rule" style="margin-top:16px">O intérprete só traduz o que <b>você</b> disse. Ele não inventa respostas. Plataformas como a micro1 proíbem respostas geradas durante a entrevista.</p>
+</div>
+</section>
+</div></main>
+
+<footer class="foot">Feito para treinar antes da entrevista. Código aberto no GitHub · <a href="https://github.com/iagoadriano/treino-entrevista">treino-entrevista</a></footer>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+// ---------- Persistência ----------
+const LS={get(k,f){try{const v=localStorage.getItem(k);return v==null?f:JSON.parse(v)}catch(e){return f}},
+          set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+// ---------- Abas ----------
+const tabs=[...document.querySelectorAll('[role=tab]')];
+const secs=['treino','star','dificeis','kit','int'];
+tabs.forEach(b=>b.onclick=()=>{tabs.forEach(x=>x.setAttribute('aria-selected',x===b));secs.forEach(s=>$(s).hidden=s!==b.dataset.t)});
+
+// ---------- Perfil + estágio ----------
+const perfil=$('perfil');
+perfil.value=LS.get('perfil',perfil.value);
+perfil.oninput=()=>LS.set('perfil',perfil.value);
+let estagio=LS.get('estagio','triagem');
+const estagioPt={triagem:'triagem (RH / telefone): foco em motivação e trajetória',tecnica:'rodada técnica: foco no que a vaga pede tecnicamente',final:'rodada final: foco em valores, encaixe, salário e ressalvas'};
+const chips=[...$('estagio').querySelectorAll('.chip')];
+const paintChips=()=>chips.forEach(c=>c.setAttribute('aria-pressed',c.dataset.s===estagio));
+chips.forEach(c=>c.onclick=()=>{estagio=c.dataset.s;LS.set('estagio',estagio);paintChips()});
+paintChips();
+
+// ---------- IA: chave da API Anthropic do próprio usuário ----------
+const keyBox=$('apikey');
+keyBox.value=LS.get('anthropic_key','');
+keyBox.onchange=()=>LS.set('anthropic_key',keyBox.value.trim());
+const callAI=async(prompt,maxTokens)=>{
+ const key=keyBox.value.trim();if(!key)throw{code:'nokey'};
+ const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+  body:JSON.stringify({model:'claude-haiku-5-5',max_tokens:maxTokens||2000,messages:[{role:'user',content:prompt+'\nResponda apenas com o JSON válido, sem texto antes ou depois.'}]})});
+ if(r.status===401)throw{code:'auth'};
+ if(r.status===429)throw{code:'rate_limited'};
+ if(!r.ok)throw{code:'http'+r.status};
+ const d=await r.json();const t=(d.content||[]).map(c=>c.text||'').join('');
+ const a=t.indexOf('{'),b=t.lastIndexOf('}');
+ if(a<0||b<0)throw{code:'parse'};
+ try{return JSON.parse(t.slice(a,b+1))}catch(e){throw{code:'parse'}}
+};
+const msgs={nokey:'Cole sua chave da API Anthropic no campo do topo.',auth:'Chave recusada. Confira se copiou a chave certa.',rate_limited:'Muitas chamadas. Espere um pouco e tente de novo.',parse:'A resposta veio incompleta. Tente de novo.'};
+const ask=async(prompt,btn,maxTokens)=>{
+ const t=btn.textContent;btn.disabled=true;btn.textContent='Pensando...';
+ try{return await callAI(prompt,maxTokens)}
+ catch(e){alertBox(msgs[e.code]||('Não foi possível agora ('+(e.code||'erro')+').'));return null}
+ finally{btn.disabled=false;btn.textContent=t}
+};
+const alertBox=m=>{$('noai').textContent=m;$('noai').hidden=false;clearTimeout(alertBox.t);alertBox.t=setTimeout(()=>$('noai').hidden=true,5000)};
+
+// ---------- Voz: recursos nativos do navegador ----------
+const synth=window.speechSynthesis;
+if(!synth)['ouvirQ','ouvirM','ouvirR'].forEach(i=>$(i)&&($(i).hidden=true));
+const speak=t=>{if(!synth||!t)return;synth.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.85;synth.speak(u)};
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const mic=(btn,area,lang)=>{if(!SR||!btn)return;btn.hidden=false;let rec=null;btn.onclick=()=>{
+ if(rec){rec.stop();return}
+ rec=new SR();rec.lang=lang;rec.continuous=true;rec.interimResults=false;
+ rec.onresult=e=>{for(let i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal)area.value=(area.value+' '+e.results[i][0].transcript).trim()};
+ rec.onerror=()=>{rec=null;btn.textContent='🎙️ Falar'};
+ rec.onend=()=>{rec=null;btn.textContent='🎙️ Falar'};
+ rec.start();btn.textContent='⏹️ Parar';
+}};
+mic($('mic'),$('resp'),'en-US');mic($('mic2'),$('mr'),'pt-BR');
+
+$('ouvirQ').onclick=()=>speak($('q').textContent);
+$('ouvirM').onclick=()=>speak($('mEn').textContent);
+$('ouvirR').onclick=()=>speak($('rEn').textContent);
+
+// ======================= TREINAR =======================
+// Estado da sessão: perguntas já feitas + notas (persistido)
+let sess=LS.get('sessao',null);
+if(!sess){sess={asked:[$('q').textContent],results:[]};LS.set('sessao',sess)}
+let n=sess.asked.length;
+$('qnum').textContent='Pergunta '+n;
+// Restaura a última pergunta mostrada
+$('q').textContent=sess.asked[sess.asked.length-1]||$('q').textContent;
+
+const renderProg=()=>{
+ const res=sess.results;
+ if(!res.length){$('progresso').hidden=true;return}
+ $('progresso').hidden=false;
+ const sp=$('spark');sp.textContent='';
+ res.slice(-12).forEach(r=>{const i=document.createElement('i');i.style.height=Math.max(8,r.nota*10)+'%';i.title='Nota '+r.nota;sp.append(i)});
+ const avg=(res.reduce((a,b)=>a+b.nota,0)/res.length).toFixed(1);
+ $('progStat').textContent=res.length+' resposta(s) avaliada(s) · média '+avg+'/10';
+ const hl=$('histList');hl.textContent='';
+ res.slice(-6).reverse().forEach(r=>{const li=document.createElement('li');
+  const a=document.createElement('span');a.textContent=r.q.length>60?r.q.slice(0,60)+'…':r.q;
+  const b=document.createElement('b');b.textContent=r.nota+'/10';li.append(a,b);hl.append(li)});
+};
+renderProg();
+
+$('avaliar').onclick=async()=>{
+ const r=$('resp').value.trim();if(!r){$('resp').focus();return}
+ const j=await ask(`Você é um treinador de entrevistas em inglês para brasileiros com inglês básico. Avalie a resposta do candidato à pergunta. Seja gentil e direto, em português. A entrevista está na fase de ${estagioPt[estagio]}.
+Pergunta: "${$('q').textContent}"
+Resposta do candidato: "${r}"
+Perfil: ${perfil.value}
+Responda SOMENTE JSON: {"nota":0-10,"feedback":"3 a 5 frases curtas em português: o que foi bom, o que faltou (partes da pergunta não respondidas), 1 erro de inglês corrigido","melhor":"versão melhorada em inglês simples, mantendo SÓ os fatos que o candidato disse, 2 a 4 frases","pronuncia":"a mesma versão escrita como se lê em português, sílaba tônica em MAIÚSCULAS"}`,$('avaliar'));
+ if(!j)return;
+ const nota=Math.max(0,Math.min(10,Number(j.nota)||0));
+ $('nota').textContent=nota;$('bar').style.width=(nota*10)+'%';
+ $('fb').textContent=j.feedback;$('mEn').textContent=j.melhor;$('mPr').textContent=j.pronuncia;$('melhor').hidden=false;
+ sess.results.push({q:$('q').textContent,nota:nota,ts:Date.now()});
+ LS.set('sessao',sess);renderProg();
+};
+
+$('prox').onclick=async()=>{
+ const j=await ask(`Você simula um entrevistador de IA (estilo micro1) que faz perguntas comportamentais e técnicas, uma por vez, com 1 a 3 partes cada. Fase atual: ${estagioPt[estagio]}.
+Perfil e vaga: ${perfil.value}
+Perguntas já feitas: ${JSON.stringify(sess.asked)}
+Crie a próxima pergunta, diferente das anteriores e adequada à fase. Responda SOMENTE JSON: {"en":"pergunta em inglês","pt":"tradução em português"}`,$('prox'));
+ if(!j)return;
+ sess.asked.push(j.en);LS.set('sessao',sess);
+ n=sess.asked.length;$('qnum').textContent='Pergunta '+n;$('q').textContent=j.en;$('qpt').textContent=j.pt;
+ $('resp').value='';$('nota').textContent='–';$('bar').style.width='0';$('fb').textContent='Responda e toque em Avaliar.';$('melhor').hidden=true;
+};
+
+$('limpar').onclick=()=>{
+ sess={asked:[sess.asked[sess.asked.length-1]||$('q').textContent],results:[]};LS.set('sessao',sess);renderProg();
+};
+
+// ======================= RESPOSTAS STAR =======================
+let stars=LS.get('stars',[]);
+const renderStars=()=>{
+ const o=$('starOut');o.textContent='';
+ if(!stars.length){const p=document.createElement('p');p.className='small';p.style.marginTop='12px';p.textContent='Nenhuma história ainda. Gere a partir do seu perfil ou adicione uma vazia.';o.append(p);return}
+ stars.forEach((s,i)=>{
+  const c=document.createElement('div');c.className='starcard';
+  c.innerHTML='<input class="t" data-f="titulo" placeholder="Título (ex.: Agentes de IA com Claude)" value="'+esc(s.titulo)+'" style="border:0;background:transparent;padding:0;font:600 16px \'Space Grotesk\'">'
+   +'<div class="small" style="margin:2px 0 8px">Serve para: <input data-f="serve" placeholder="tipo de pergunta" value="'+esc(s.serve)+'" style="display:inline-block;width:auto;border:0;border-bottom:1px solid var(--line);background:transparent;padding:2px;font-size:13px"></div>'
+   +'<dl><dt>S</dt><dd><input data-f="s" value="'+esc(s.s)+'"></dd>'
+   +'<dt>T</dt><dd><input data-f="t" value="'+esc(s.t)+'"></dd>'
+   +'<dt>A</dt><dd><input data-f="a" value="'+esc(s.a)+'"></dd>'
+   +'<dt>R</dt><dd><input data-f="r" value="'+esc(s.r)+'"></dd></dl>'
+   +'<div class="row"><button class="btn ghost ouvir">🔊 Ouvir</button><button class="btn ghost del">Apagar</button></div>';
+  c.querySelectorAll('input').forEach(inp=>inp.oninput=()=>{stars[i][inp.dataset.f]=inp.value;LS.set('stars',stars)});
+  c.querySelector('.del').onclick=()=>{stars.splice(i,1);LS.set('stars',stars);renderStars()};
+  c.querySelector('.ouvir').onclick=()=>speak([s.s,s.t,s.a,s.r].filter(Boolean).join('. '));
+  o.append(c);
+ });
+};
+renderStars();
+$('addStar').onclick=()=>{stars.push({titulo:'',serve:'',s:'',t:'',a:'',r:''});LS.set('stars',stars);renderStars()};
+$('gerarStar').onclick=async()=>{
+ const j=await ask(`Monte um banco de respostas STAR para entrevista em inglês, usando SOMENTE fatos do perfil abaixo. Não invente experiências, números nem empresas. Inglês simples (inglês básico). Cada história deve caber em 1-2 minutos.
+Perfil: ${perfil.value}
+Responda SOMENTE JSON: {"itens":[{"titulo":"nome curto da história","serve":"tipos de pergunta que ela responde","s":"Situação em inglês simples","t":"Tarefa em inglês simples","a":"Ação em inglês simples","r":"Resultado em inglês simples"}]} com 4 a 6 itens.`,$('gerarStar'),2600);
+ if(!j||!j.itens)return;
+ stars=j.itens.map(x=>({titulo:x.titulo||'',serve:x.serve||'',s:x.s||'',t:x.t||'',a:x.a||'',r:x.r||''}));
+ LS.set('stars',stars);renderStars();
+};
+
+// ======================= PERGUNTAS DIFÍCEIS =======================
+$('gerarDif').onclick=async()=>{
+ const j=await ask(`Prepare respostas para as perguntas difíceis de entrevista, para um brasileiro com inglês básico. Fase: ${estagioPt[estagio]}.
+Perfil e vaga: ${perfil.value}
+Para lacunas (algo que o candidato NÃO tem), use o padrão PONTE: reconhecer a lacuna → ligar à experiência mais próxima que ele realmente tem → mostrar como está aprendendo. NUNCA invente experiência. Mantenha honesto e específico ao perfil.
+Inclua ao menos: "Why do you want this job / this company?", "What is your biggest weakness?", "You don't have [uma habilidade que falta na vaga]", "Where do you see yourself in 5 years?".
+Responda SOMENTE JSON: {"itens":[{"en":"a pergunta em inglês","porque":"por que ela é difícil / o que o entrevistador quer, em português","resposta":"resposta modelo em inglês simples, só com fatos do perfil","pr":"a resposta como se lê em português, tônica em MAIÚSCULAS"}]} com 4 a 6 itens.`,$('gerarDif'),2800);
+ if(!j||!j.itens)return;
+ const o=$('difOut');o.textContent='';
+ const h=document.createElement('h3');h.style.marginTop='18px';h.textContent='Respostas pras perguntas difíceis';o.append(h);
+ j.itens.forEach(it=>{
+  const d=document.createElement('details');d.className='block';
+  d.innerHTML='<summary>'+esc(it.en)+'</summary>'
+   +'<p class="small" style="margin:8px 0 4px"><b>O que ele quer:</b> '+esc(it.porque)+'</p>'
+   +'<div class="say"><div class="en">'+esc(it.resposta)+'</div><div class="pr">'+esc(it.pr)+'</div></div>';
+  const b=document.createElement('button');b.className='btn ghost';b.textContent='🔊 Ouvir';b.onclick=()=>speak(it.resposta);d.append(b);
+  o.append(d);
+ });
+};
+$('gerarPerg').onclick=async()=>{
+ const j=await ask(`Liste boas perguntas para o CANDIDATO fazer ao entrevistador, adequadas à fase: ${estagioPt[estagio]}. Elas devem mostrar preparo e ajudar o candidato a decidir. Evite perguntas cuja resposta é óbvia ou já estaria no anúncio.
+Perfil e vaga: ${perfil.value}
+Responda SOMENTE JSON: {"itens":[{"en":"pergunta em inglês","pt":"tradução em português","pr":"como se lê em português, tônica em MAIÚSCULAS"}]} com 5 a 6 itens.`,$('gerarPerg'),2000);
+ if(!j||!j.itens)return;
+ const o=$('pergOut');o.textContent='';
+ const h=document.createElement('h3');h.style.marginTop='18px';h.textContent='Perguntas pra você fazer';o.append(h);
+ j.itens.forEach(it=>{
+  const d=document.createElement('div');d.className='block';
+  d.innerHTML='<div class="en" style="font-weight:600">'+esc(it.en)+'</div><div class="small">'+esc(it.pt)+'</div><div class="pr small" style="color:var(--mut)">'+esc(it.pr)+'</div>';
+  const b=document.createElement('button');b.className='btn ghost';b.textContent='🔊 Ouvir';b.style.marginTop='8px';b.onclick=()=>speak(it.en);d.append(b);
+  o.append(d);
+ });
+};
+
+// ======================= KIT =======================
+$('cv').value=LS.get('cv','');$('cv').oninput=()=>LS.set('cv',$('cv').value);
+$('vaga').value=LS.get('vaga',$('vaga').value);$('vaga').oninput=()=>LS.set('vaga',$('vaga').value);
+let kitData=LS.get('kit',null);
+const renderKit=d=>{
+ const ol=$('kitOut');ol.textContent='';
+ if(!d||!d.itens){$('copiarKit').hidden=true;return}
+ d.itens.forEach(it=>{
+  const li=document.createElement('li');
+  const h=document.createElement('b');h.textContent=it.q;li.append(h);
+  const p=document.createElement('div');p.className='small';p.textContent=it.pt;li.append(p);
+  const s=document.createElement('div');s.className='say';
+  const e=document.createElement('div');e.className='en';e.textContent=it.a;
+  const r=document.createElement('div');r.className='pr';r.textContent=it.pr;s.append(e,r);li.append(s);
+  if(synth){const b=document.createElement('button');b.className='btn ghost';b.textContent='🔊 Ouvir';b.onclick=()=>speak(it.a);li.append(b)}
+  ol.append(li);
+ });
+ $('copiarKit').hidden=false;
+};
+renderKit(kitData);
+$('gerarKit').onclick=async()=>{
+ const cv=$('cv').value.trim();if(!cv){$('cv').focus();return}
+ const j=await ask(`Crie um kit de preparação para entrevista em inglês para um brasileiro com inglês básico.
+Vaga/plataforma: ${$('vaga').value}
+Currículo: ${cv}
+Use SÓ fatos do currículo; não invente experiências. Respostas curtas (2 a 3 frases), inglês simples, estrutura STAR quando couber.
+Responda SOMENTE JSON: {"itens":[{"q":"pergunta em inglês","pt":"tradução","a":"resposta modelo em inglês","pr":"como se lê em português, tônica em MAIÚSCULAS"}]} com 10 itens.`,$('gerarKit'),3000);
+ if(!j||!j.itens)return;
+ kitData=j;LS.set('kit',kitData);renderKit(kitData);
+};
+$('copiarKit').onclick=async()=>{
+ if(!kitData||!kitData.itens)return;
+ const txt=kitData.itens.map((it,i)=>`${i+1}. ${it.q}\n   (${it.pt})\n   ${it.a}\n   [${it.pr}]`).join('\n\n');
+ try{await navigator.clipboard.writeText(txt);$('copiarKit').textContent='✅ Copiado';setTimeout(()=>$('copiarKit').textContent='📋 Copiar tudo',1800)}catch(e){alertBox('Não deu para copiar neste navegador.')}
+};
+
+// ======================= INTÉRPRETE =======================
+$('tradQ').onclick=async()=>{
+ const q=$('pq').value.trim();if(!q)return;
+ const j=await ask(`Traduza para português do Brasil e explique em 1 frase simples o que o entrevistador quer saber. NÃO sugira respostas.
+Pergunta: "${q}"
+Responda SOMENTE JSON: {"pt":"tradução","quer":"o que ele quer saber"}`,$('tradQ'));
+ if(j)$('pqOut').textContent=j.pt+'\n\nEle quer saber: '+j.quer;
+};
+$('tradR').onclick=async()=>{
+ const r=$('mr').value.trim();if(!r){$('mr').focus();return}
+ const j=await ask(`Você é um intérprete. Traduza FIELMENTE para inglês simples e natural o que o candidato disse. Não acrescente fatos, ideias ou detalhes que ele não disse. Não melhore o conteúdo, só a língua.
+Texto: "${r}"
+Responda SOMENTE JSON: {"en":"tradução","pr":"como se lê em português, tônica em MAIÚSCULAS"}`,$('tradR'));
+ if(j){$('rEn').textContent=j.en;$('rPr').textContent=j.pr}
+};
+}
+</script>
+</body>
+</html>
