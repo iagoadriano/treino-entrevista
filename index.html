@@ -374,7 +374,23 @@ paintAccount();applyGate();
 // ---------- Voz: recursos nativos do navegador ----------
 const synth=window.speechSynthesis;
 if(!synth)['ouvirQ','ouvirM','ouvirR'].forEach(i=>$(i)&&($(i).hidden=true));
-const speak=t=>{if(!synth||!t)return;synth.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=.85;synth.speak(u)};
+let voices=[];
+const loadVoices=()=>{try{voices=synth.getVoices()||[]}catch(e){voices=[]}};
+if(synth){loadVoices();try{synth.onvoiceschanged=loadVoices}catch(e){}}
+// iOS/Safari: a voz só "liga" depois de um primeiro toque; desbloqueia com um utterance mudo.
+let voiceUnlocked=false;
+const unlockVoice=()=>{if(voiceUnlocked||!synth)return;voiceUnlocked=true;try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;synth.speak(u)}catch(e){}};
+if(synth)document.addEventListener('pointerdown',unlockVoice,{once:true});
+const speak=t=>{
+ if(!synth||!t)return;
+ try{synth.resume()}catch(e){}
+ try{if(synth.speaking||synth.pending)synth.cancel()}catch(e){}
+ const u=new SpeechSynthesisUtterance(t);
+ const v=voices.find(x=>/en[-_]us/i.test(x.lang))||voices.find(x=>/^en/i.test(x.lang));
+ if(v){u.voice=v;u.lang=v.lang}else{u.lang='en-US'}
+ u.rate=.9;
+ try{synth.speak(u)}catch(e){}
+};
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 const mic=(btn,area,lang)=>{if(!SR||!btn)return;btn.hidden=false;let rec=null;btn.onclick=()=>{
  if(rec){rec.stop();return}
