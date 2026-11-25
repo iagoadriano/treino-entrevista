@@ -38,11 +38,41 @@ mesmo escreveu, e serve para treinar antes, não para colar na hora.
 > funciona melhor no Chrome. A chave da API é sua e tem custo de uso na Anthropic — o
 > app usa o modelo mais barato e rápido (Claude Haiku).
 
+## Entrar (opcional): nuvem + cofre da chave
+
+O app funciona sem login (dados no navegador, você cola sua chave). Mas se você **entrar
+com o e-mail**, ganha duas coisas, via Supabase:
+
+1. **Sincronização** — perfil, histórico, banco STAR e kit ficam num banco e aparecem em
+   qualquer dispositivo onde você entrar.
+2. **Cofre da chave** — a chave da Anthropic fica como *secret no servidor* (numa Edge
+   Function). O navegador nunca vê a chave; ele só chama a função, que fala com a Anthropic.
+
+### Configuração (Supabase)
+
+O backend já está provisionado no projeto Supabase (`SB_URL`/`SB_ANON` no `index.html`):
+tabela `treino_entrevista_state` com RLS, e a Edge Function `treino-anthropic`
+(ver `supabase/`). Faltam **3 passos manuais** no painel:
+
+1. **Edge Functions → Secrets** → adicione:
+   - `ANTHROPIC_API_KEY` = sua chave `sk-ant-...`
+   - `ALLOWED_EMAILS` = seu e-mail (vários separados por vírgula). Só esses e-mails podem
+     usar o cofre, para ninguém mais gastar sua chave.
+2. **Authentication → URL Configuration → Redirect URLs** → adicione a URL do app
+   (ex.: `https://iagoadriano.github.io/treino-entrevista/`) e, para testar local,
+   `http://localhost:8000`. Sem isso o link mágico do e-mail não volta para o app.
+3. **Authentication → Providers → Email** → garanta que o login por e-mail está ligado.
+
+> Só entre quem você liberar em `ALLOWED_EMAILS`. Se o e-mail não estiver na lista, o app
+> entra mas o cofre recusa a chamada (e você pode seguir com a sua própria chave).
+
 ## Privacidade
 
-- A chave da API e todos os seus dados (perfil, histórico, banco STAR, kit) ficam **só no
-  seu navegador** (`localStorage`). Nada é enviado para nenhum servidor além da Anthropic.
-- Limpar os dados do site apaga tudo.
+- Sem login: a chave da API e seus dados (perfil, histórico, STAR, kit) ficam **só no seu
+  navegador** (`localStorage`). Nada sai dele além das chamadas diretas à Anthropic.
+- Com login: seus dados vão para o seu banco no Supabase (isolado por RLS — cada pessoa só
+  vê o que é seu) e a chave fica no cofre do servidor, nunca no navegador.
+- Limpar os dados do site apaga a cópia local; `Sair` + limpar remove a sessão.
 
 ## Rodar / hospedar
 
