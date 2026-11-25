@@ -86,7 +86,7 @@ summary{cursor:pointer;font-weight:600;font-family:"Space Grotesk"}
 <header class="band hero"><div class="wrap">
 <h1>Treino de entrevista em inglês</h1>
 <p>Pratique antes, entenda as perguntas na hora e responda com as suas próprias palavras. O sistema corrige, traduz e mostra como pronunciar — sem nunca inventar experiências que você não tem.</p>
-<div class="tabs" role="tablist" aria-label="Seções">
+<div class="tabs" role="tablist" aria-label="Seções" id="tabsRow" hidden>
 <button role="tab" data-t="treino" aria-selected="true">Treinar</button>
 <button role="tab" data-t="responder" aria-selected="false">Responder</button>
 <button role="tab" data-t="star" aria-selected="false">Respostas STAR</button>
@@ -95,13 +95,24 @@ summary{cursor:pointer;font-weight:600;font-family:"Space Grotesk"}
 <button role="tab" data-t="int" aria-selected="false">Intérprete</button>
 </div></div></header>
 
-<main class="band"><div class="wrap">
-<div class="card" id="conta" style="margin-bottom:20px">
-<div id="contaDeslogado">
-<label for="loginEmail" style="margin-top:0">Entrar <span class="small" style="font-weight:400">(opcional — para sincronizar seus dados e usar o cofre da chave)</span></label>
+<!-- ======================= TELA DE LOGIN (porta de entrada) ======================= -->
+<section id="gate" class="band"><div class="wrap" style="max-width:520px">
+<div class="card">
+<h2>Entrar</h2>
+<p class="small" style="margin-top:6px">Entre com seu e-mail para liberar o treino. Você recebe um <b>link de acesso</b> (sem senha). Entrando, seus dados sincronizam entre dispositivos e a chave da API fica num <b>cofre no servidor</b> — você não precisa colá-la.</p>
+<label for="loginEmail" style="margin-top:16px">Seu e-mail</label>
 <div class="keybox"><input id="loginEmail" type="email" placeholder="seu@email.com" autocomplete="email" spellcheck="false">
 <button class="btn" id="entrar" type="button">Enviar link</button></div>
-<p class="small">Você recebe um link de acesso no e-mail (sem senha). Entrando, seus dados ficam salvos na nuvem e a chave da API fica num cofre no servidor — você não precisa colá-la.</p>
+<p id="gateMsg" class="rule" style="margin-top:12px" hidden></p>
+<p class="small" style="margin-top:16px"><a href="#" id="semconta">Entrar sem conta (usar minha própria chave) →</a></p>
+</div>
+</div></section>
+
+<main class="band" id="app" hidden><div class="wrap">
+<div class="card" id="conta" style="margin-bottom:20px">
+<div id="contaDeslogado">
+<label style="margin-top:0">Sem conta <span class="small" style="font-weight:400">— seus dados ficam só neste navegador</span></label>
+<div class="row" style="margin-top:4px"><button class="btn" id="abrirGate" type="button">Entrar para sincronizar e usar o cofre</button></div>
 </div>
 <div id="contaLogado" hidden>
 <label style="margin-top:0">Conectado <span class="pill" id="syncInd" hidden>☁️ salvo</span></label>
@@ -318,6 +329,11 @@ const SB_URL='https://pfzgtryoebzhshxjzbsr.supabase.co';
 const SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmemd0cnlvZWJ6aHNoeGp6YnNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjkzOTksImV4cCI6MjA5ODA0NTM5OX0.D7CV_awa_uDg3y4Dy0vDYGnFRMny4tdlYXde55onZwA';
 const paintAccount=()=>{const on=!!sbSession;$('contaDeslogado').hidden=on;$('contaLogado').hidden=!on;$('keyCard').hidden=on;if(on)$('contaEmail').textContent=sbSession.user.email||''};
 const paintSync=st=>{const el=$('syncInd');if(!el)return;el.hidden=!sbSession;el.textContent=st==='saving'?'☁️ sincronizando…':st==='erro'?'⚠️ erro ao salvar':'☁️ salvo'};
+// Porta de entrada: mostra o login primeiro; libera o app ao logar (ou ao optar por "sem conta").
+const showApp=()=>{$('gate').hidden=true;$('app').hidden=false;$('tabsRow').hidden=false};
+const showGate=()=>{$('gate').hidden=false;$('app').hidden=true;$('tabsRow').hidden=true};
+const noauth=()=>{try{return localStorage.getItem('treino_noauth')==='1'}catch(e){return false}};
+const applyGate=()=>{(sbSession||noauth()||!sb)?showApp():showGate()};
 if(window.supabase&&window.supabase.createClient){try{sb=window.supabase.createClient(SB_URL,SB_ANON)}catch(e){sb=null}}
 if(sb){
  const snapshot=()=>{const o={};SYNC_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v!=null)o[k]=v});return o};
@@ -338,7 +354,7 @@ if(sb){
    paintSync('salvo');
   }else{const {error:e2}=await sb.from('treino_entrevista_state').upsert({user_id:sbSession.user.id,data:snapshot()});paintSync(e2?'erro':'salvo')}
  };
- const setSession=s=>{sbSession=s;paintAccount();paintSync('salvo');if(s)onLogin()};
+ const setSession=s=>{sbSession=s;if(s){try{localStorage.removeItem('treino_noauth')}catch(e){}}paintAccount();paintSync('salvo');applyGate();if(s)onLogin()};
  sb.auth.getSession().then(({data})=>setSession(data.session));
  sb.auth.onAuthStateChange((_e,s)=>setSession(s));
  $('entrar').onclick=async()=>{
@@ -346,12 +362,14 @@ if(sb){
   const btn=$('entrar'),t=btn.textContent;btn.disabled=true;btn.textContent='Enviando…';
   const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.href.split('#')[0]}});
   btn.disabled=false;btn.textContent=t;
-  alertBox(error?('Não deu para enviar o link: '+error.message):('Link de acesso enviado para '+email+'. Abra no seu e-mail (pode cair no spam).'));
+  const g=$('gateMsg');g.hidden=false;g.textContent=error?('Não deu para enviar o link: '+error.message):('✅ Link de acesso enviado para '+email+'. Abra no seu e-mail (pode cair no spam/promoções) e clique para entrar.');
  };
  $('loginEmail').onkeydown=e=>{if(e.key==='Enter')$('entrar').click()};
- $('sair').onclick=async()=>{try{await sb.auth.signOut()}catch(e){}sessionStorage.removeItem('treino_synced');location.reload()};
+ $('semconta').onclick=e=>{e.preventDefault();try{localStorage.setItem('treino_noauth','1')}catch(e){}showApp()};
+ $('abrirGate').onclick=()=>{try{localStorage.removeItem('treino_noauth')}catch(e){}showGate()};
+ $('sair').onclick=async()=>{try{await sb.auth.signOut()}catch(e){}try{localStorage.removeItem('treino_noauth')}catch(e){}sessionStorage.removeItem('treino_synced');location.reload()};
 }else{$('conta').hidden=true}
-paintAccount();
+paintAccount();applyGate();
 
 // ---------- Voz: recursos nativos do navegador ----------
 const synth=window.speechSynthesis;
