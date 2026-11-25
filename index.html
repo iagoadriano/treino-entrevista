@@ -73,13 +73,20 @@ summary{cursor:pointer;font-weight:600;font-family:"Space Grotesk"}
 .starcard dt{font-weight:700;color:var(--accent)}
 .foot{color:var(--mut);font-size:13px;text-align:center;padding:30px 16px 50px}
 .foot a{color:inherit}
+.keybox{display:flex;gap:8px;align-items:stretch}
+.keybox input{flex:1}
+.keybox .btn{padding:0 14px;min-height:0}
+.check{display:flex;align-items:center;gap:8px;font-weight:500;font-size:14px;margin:0;cursor:pointer}
+.check input{width:auto;min-height:0}
+.pill#keyEstado{background:var(--line);color:var(--mut)}
+.pill#keyEstado[data-on=salva]{background:var(--mint);color:var(--mintInk)}
 </style>
 </head>
 <body>
 <header class="band hero"><div class="wrap">
 <h1>Treino de entrevista em inglês</h1>
 <p>Pratique antes, entenda as perguntas na hora e responda com as suas próprias palavras. O sistema corrige, traduz e mostra como pronunciar — sem nunca inventar experiências que você não tem.</p>
-<div class="tabs" role="tablist" aria-label="Seções">
+<div class="tabs" role="tablist" aria-label="Seções" id="tabsRow" hidden>
 <button role="tab" data-t="treino" aria-selected="true">Treinar</button>
 <button role="tab" data-t="responder" aria-selected="false">Responder</button>
 <button role="tab" data-t="star" aria-selected="false">Respostas STAR</button>
@@ -88,10 +95,39 @@ summary{cursor:pointer;font-weight:600;font-family:"Space Grotesk"}
 <button role="tab" data-t="int" aria-selected="false">Intérprete</button>
 </div></div></header>
 
-<main class="band"><div class="wrap">
-<div class="card" style="margin-bottom:20px"><label for="apikey" style="margin-top:0">Sua chave da API Anthropic</label>
-<input id="apikey" type="password" placeholder="sk-ant-..." autocomplete="off">
-<p class="small">Crie em console.anthropic.com. A chave fica salva só neste navegador e vai direto para a Anthropic.</p></div>
+<!-- ======================= TELA DE LOGIN (porta de entrada) ======================= -->
+<section id="gate" class="band"><div class="wrap" style="max-width:520px">
+<div class="card">
+<h2>Entrar</h2>
+<p class="small" style="margin-top:6px">Entre com seu e-mail para liberar o treino. Você recebe um <b>link de acesso</b> (sem senha). Entrando, seus dados sincronizam entre dispositivos e a chave da API fica num <b>cofre no servidor</b> — você não precisa colá-la.</p>
+<label for="loginEmail" style="margin-top:16px">Seu e-mail</label>
+<div class="keybox"><input id="loginEmail" type="email" placeholder="seu@email.com" autocomplete="email" spellcheck="false">
+<button class="btn" id="entrar" type="button">Enviar link</button></div>
+<p id="gateMsg" class="rule" style="margin-top:12px" hidden></p>
+<p class="small" style="margin-top:16px"><a href="#" id="semconta">Entrar sem conta (usar minha própria chave) →</a></p>
+</div>
+</div></section>
+
+<main class="band" id="app" hidden><div class="wrap">
+<div class="card" id="conta" style="margin-bottom:20px">
+<div id="contaDeslogado">
+<label style="margin-top:0">Sem conta <span class="small" style="font-weight:400">— seus dados ficam só neste navegador</span></label>
+<div class="row" style="margin-top:4px"><button class="btn" id="abrirGate" type="button">Entrar para sincronizar e usar o cofre</button></div>
+</div>
+<div id="contaLogado" hidden>
+<label style="margin-top:0">Conectado <span class="pill" id="syncInd" hidden>☁️ salvo</span></label>
+<div class="row" style="margin-top:4px"><b id="contaEmail" style="font-family:'Space Grotesk'"></b><button class="btn ghost" id="sair" type="button">Sair</button></div>
+<p class="small">Seus dados sincronizam entre dispositivos. A chave da API está guardada no cofre do servidor.</p>
+</div>
+</div>
+<div class="card" id="keyCard" style="margin-bottom:20px"><label for="apikey" style="margin-top:0">Sua chave da API Anthropic <span class="pill" id="keyEstado">não salva</span></label>
+<div class="keybox"><input id="apikey" type="password" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+<button class="btn ghost" id="verKey" type="button" aria-label="Mostrar ou esconder a chave" title="Mostrar/esconder">👁️</button></div>
+<div class="row" style="margin-top:10px">
+<label class="check"><input type="checkbox" id="lembrar"> Guardar a chave neste navegador</label>
+<button class="btn ghost" id="esquecer" type="button">🗑️ Esquecer chave</button>
+</div>
+<p class="small">Crie em console.anthropic.com. Este app roda 100% no seu navegador: a chave vai <b>direto para a Anthropic</b>, sem passar por nenhum servidor nosso. Por isso não dá para escondê-la de verdade de quem usa este navegador — deixe <b>desmarcado</b> para que ela suma ao fechar a aba, e aperte <b>Esquecer</b> em computador compartilhado. Nunca use a chave de outra pessoa.</p></div>
 <p id="noai" class="rule" hidden></p>
 
 <!-- Perfil + estágio: compartilhado por Treinar, STAR e Perguntas difíceis -->
@@ -216,14 +252,18 @@ summary{cursor:pointer;font-weight:600;font-family:"Space Grotesk"}
 
 <footer class="foot">Feito para treinar antes da entrevista. Código aberto no GitHub · <a href="https://github.com/iagoadriano/treino-entrevista">treino-entrevista</a></footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 {
 const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 
 // ---------- Persistência ----------
+let cloudSave=()=>{};                 // reatribuído quando o Supabase conecta
+const SYNC_KEYS=['perfil','estagio','sessao','stars','kit','cv','vaga'];
 const LS={get(k,f){try{const v=localStorage.getItem(k);return v==null?f:JSON.parse(v)}catch(e){return f}},
-          set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+          set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}if(SYNC_KEYS.includes(k))cloudSave()}};
+let sb=null,sbSession=null;           // cliente Supabase e sessão
 
 // ---------- Abas ----------
 const tabs=[...document.querySelectorAll('[role=tab]')];
@@ -242,22 +282,40 @@ chips.forEach(c=>c.onclick=()=>{estagio=c.dataset.s;LS.set('estagio',estagio);pa
 paintChips();
 
 // ---------- IA: chave da API Anthropic do próprio usuário ----------
-const keyBox=$('apikey');
-keyBox.value=LS.get('anthropic_key','');
-keyBox.onchange=()=>LS.set('anthropic_key',keyBox.value.trim());
+const keyBox=$('apikey'),lembrar=$('lembrar'),keyEstado=$('keyEstado');
+// A chave guardada vale como "quero lembrar"; sem nada guardado, começa não-salva.
+const savedKey=LS.get('anthropic_key','');
+keyBox.value=savedKey;lembrar.checked=!!savedKey;
+const pintaEstado=()=>{const on=lembrar.checked&&keyBox.value.trim();keyEstado.textContent=on?'salva neste navegador':'não salva';keyEstado.dataset.on=on?'salva':'nao'};
+const guarda=()=>{ // escreve no disco só se "lembrar"; senão fica só em memória
+ if(lembrar.checked&&keyBox.value.trim())LS.set('anthropic_key',keyBox.value.trim());
+ else{try{localStorage.removeItem('anthropic_key')}catch(e){}}
+ pintaEstado();
+};
+keyBox.oninput=guarda;lembrar.onchange=guarda;pintaEstado();
+$('verKey').onclick=()=>{keyBox.type=keyBox.type==='password'?'text':'password'};
+$('esquecer').onclick=()=>{keyBox.value='';lembrar.checked=false;try{localStorage.removeItem('anthropic_key')}catch(e){}pintaEstado();keyBox.focus()};
+const JSON_SUFFIX='\nResponda apenas com o JSON válido, sem texto antes ou depois.';
+const parseAnthropic=d=>{const t=(d.content||[]).map(c=>c.text||'').join('');const a=t.indexOf('{'),b=t.lastIndexOf('}');if(a<0||b<0)throw{code:'parse'};try{return JSON.parse(t.slice(a,b+1))}catch(e){throw{code:'parse'}}};
 const callAI=async(prompt,maxTokens)=>{
+ const full=prompt+JSON_SUFFIX,mt=maxTokens||2000;
+ if(sbSession){ // ---- COFRE: a chave fica no servidor; chamamos a Edge Function ----
+  let r;try{r=await fetch(SB_URL+'/functions/v1/treino-anthropic',{method:'POST',headers:{'content-type':'application/json','Authorization':'Bearer '+sbSession.access_token,'apikey':SB_ANON},body:JSON.stringify({prompt:full,max_tokens:mt})})}catch(e){throw{code:'rede'}}
+  let d;try{d=await r.json()}catch(e){throw{code:'parse'}}
+  if(!r.ok)throw{code:(d&&d.error)||('http'+r.status)};
+  return parseAnthropic(d);
+ }
+ // ---- Sem login: usa a chave do próprio navegador, direto na Anthropic ----
  const key=keyBox.value.trim();if(!key)throw{code:'nokey'};
  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-  body:JSON.stringify({model:'claude-haiku-5-5',max_tokens:maxTokens||2000,messages:[{role:'user',content:prompt+'\nResponda apenas com o JSON válido, sem texto antes ou depois.'}]})});
+  body:JSON.stringify({model:'claude-haiku-5-5',max_tokens:mt,messages:[{role:'user',content:full}]})});
  if(r.status===401)throw{code:'auth'};
  if(r.status===429)throw{code:'rate_limited'};
  if(!r.ok)throw{code:'http'+r.status};
- const d=await r.json();const t=(d.content||[]).map(c=>c.text||'').join('');
- const a=t.indexOf('{'),b=t.lastIndexOf('}');
- if(a<0||b<0)throw{code:'parse'};
- try{return JSON.parse(t.slice(a,b+1))}catch(e){throw{code:'parse'}}
+ const d=await r.json();
+ return parseAnthropic(d);
 };
-const msgs={nokey:'Cole sua chave da API Anthropic no campo do topo.',auth:'Chave recusada. Confira se copiou a chave certa.',rate_limited:'Muitas chamadas. Espere um pouco e tente de novo.',parse:'A resposta veio incompleta. Tente de novo.'};
+const msgs={nokey:'Cole sua chave da API Anthropic no campo do topo, ou entre com seu e-mail para usar o cofre.',auth:'Chave recusada. Confira se copiou a chave certa.',rate_limited:'Muitas chamadas. Espere um pouco e tente de novo.',parse:'A resposta veio incompleta. Tente de novo.',rede:'Falha de rede. Verifique sua conexão.',nao_autenticado:'Sua sessão expirou. Entre de novo.',email_nao_autorizado:'Seu e-mail não está liberado para usar o cofre.',chave_nao_configurada:'A chave ainda não foi configurada no servidor (Supabase → Edge Functions → Secrets).',prompt_vazio:'Escreva algo antes de enviar.'};
 const ask=async(prompt,btn,maxTokens)=>{
  const t=btn.textContent;btn.disabled=true;btn.textContent='Pensando...';
  try{return await callAI(prompt,maxTokens)}
@@ -265,6 +323,53 @@ const ask=async(prompt,btn,maxTokens)=>{
  finally{btn.disabled=false;btn.textContent=t}
 };
 const alertBox=m=>{$('noai').textContent=m;$('noai').hidden=false;clearTimeout(alertBox.t);alertBox.t=setTimeout(()=>$('noai').hidden=true,5000)};
+
+// ---------- Supabase: login (cofre da chave) + sincronização entre dispositivos ----------
+const SB_URL='https://pfzgtryoebzhshxjzbsr.supabase.co';
+const SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmemd0cnlvZWJ6aHNoeGp6YnNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0NjkzOTksImV4cCI6MjA5ODA0NTM5OX0.D7CV_awa_uDg3y4Dy0vDYGnFRMny4tdlYXde55onZwA';
+const paintAccount=()=>{const on=!!sbSession;$('contaDeslogado').hidden=on;$('contaLogado').hidden=!on;$('keyCard').hidden=on;if(on)$('contaEmail').textContent=sbSession.user.email||''};
+const paintSync=st=>{const el=$('syncInd');if(!el)return;el.hidden=!sbSession;el.textContent=st==='saving'?'☁️ sincronizando…':st==='erro'?'⚠️ erro ao salvar':'☁️ salvo'};
+// Porta de entrada: mostra o login primeiro; libera o app ao logar (ou ao optar por "sem conta").
+const showApp=()=>{$('gate').hidden=true;$('app').hidden=false;$('tabsRow').hidden=false};
+const showGate=()=>{$('gate').hidden=false;$('app').hidden=true;$('tabsRow').hidden=true};
+const noauth=()=>{try{return localStorage.getItem('treino_noauth')==='1'}catch(e){return false}};
+const applyGate=()=>{(sbSession||noauth()||!sb)?showApp():showGate()};
+if(window.supabase&&window.supabase.createClient){try{sb=window.supabase.createClient(SB_URL,SB_ANON)}catch(e){sb=null}}
+if(sb){
+ const snapshot=()=>{const o={};SYNC_KEYS.forEach(k=>{const v=localStorage.getItem(k);if(v!=null)o[k]=v});return o};
+ let timer;
+ cloudSave=()=>{if(!sbSession)return;paintSync('saving');clearTimeout(timer);timer=setTimeout(async()=>{
+  const {error}=await sb.from('treino_entrevista_state').upsert({user_id:sbSession.user.id,data:snapshot()});paintSync(error?'erro':'salvo');
+ },800)};
+ let loadedFor=null;
+ const onLogin=async()=>{
+  if(!sbSession||loadedFor===sbSession.user.id)return;loadedFor=sbSession.user.id;
+  const {data,error}=await sb.from('treino_entrevista_state').select('data').eq('user_id',sbSession.user.id).maybeSingle();
+  if(error){paintSync('erro');return}
+  const cloud=data&&data.data;
+  if(cloud&&Object.keys(cloud).length){
+   let changed=false;
+   SYNC_KEYS.forEach(k=>{if(cloud[k]!=null&&localStorage.getItem(k)!==cloud[k]){try{localStorage.setItem(k,cloud[k])}catch(e){}changed=true}});
+   if(changed&&!sessionStorage.getItem('treino_synced')){sessionStorage.setItem('treino_synced','1');location.reload();return}
+   paintSync('salvo');
+  }else{const {error:e2}=await sb.from('treino_entrevista_state').upsert({user_id:sbSession.user.id,data:snapshot()});paintSync(e2?'erro':'salvo')}
+ };
+ const setSession=s=>{sbSession=s;if(s){try{localStorage.removeItem('treino_noauth')}catch(e){}}paintAccount();paintSync('salvo');applyGate();if(s)onLogin()};
+ sb.auth.getSession().then(({data})=>setSession(data.session));
+ sb.auth.onAuthStateChange((_e,s)=>setSession(s));
+ $('entrar').onclick=async()=>{
+  const email=$('loginEmail').value.trim();if(!email){$('loginEmail').focus();return}
+  const btn=$('entrar'),t=btn.textContent;btn.disabled=true;btn.textContent='Enviando…';
+  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.href.split('#')[0]}});
+  btn.disabled=false;btn.textContent=t;
+  const g=$('gateMsg');g.hidden=false;g.textContent=error?('Não deu para enviar o link: '+error.message):('✅ Link de acesso enviado para '+email+'. Abra no seu e-mail (pode cair no spam/promoções) e clique para entrar.');
+ };
+ $('loginEmail').onkeydown=e=>{if(e.key==='Enter')$('entrar').click()};
+ $('semconta').onclick=e=>{e.preventDefault();try{localStorage.setItem('treino_noauth','1')}catch(e){}showApp()};
+ $('abrirGate').onclick=()=>{try{localStorage.removeItem('treino_noauth')}catch(e){}showGate()};
+ $('sair').onclick=async()=>{try{await sb.auth.signOut()}catch(e){}try{localStorage.removeItem('treino_noauth')}catch(e){}sessionStorage.removeItem('treino_synced');location.reload()};
+}else{$('conta').hidden=true}
+paintAccount();applyGate();
 
 // ---------- Voz: recursos nativos do navegador ----------
 const synth=window.speechSynthesis;
